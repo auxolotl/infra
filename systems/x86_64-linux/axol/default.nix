@@ -1,3 +1,5 @@
+# axol
+# 137.184.177.239
 {
   pkgs,
   modulesPath,
@@ -26,14 +28,16 @@
     users.infra.enable = true;
 
     security = {
+      doas.enable = true;
+
       acme = {
         enable = true;
         email = "jake.hamilton@hey.com";
-        staging = true;
       };
     };
 
     services = {
+      chat.enable = true;
       website.enable = true;
     };
   };

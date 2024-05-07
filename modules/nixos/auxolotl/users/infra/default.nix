@@ -17,6 +17,8 @@ in {
       home = "/home/infra";
       createHome = true;
 
+      initialPassword = "password";
+
       extraGroups = ["wheel"];
 
       openssh.authorizedKeys.keys = [

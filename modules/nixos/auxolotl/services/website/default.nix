@@ -17,7 +17,7 @@ in {
 
     package = lib.mkOption {
       type = lib.types.package;
-      default = pkgs.aux.website;
+      default = pkgs.auxolotl.website;
       defaultText = "pkgs.aux.website";
       description = "The website files to serve.";
     };

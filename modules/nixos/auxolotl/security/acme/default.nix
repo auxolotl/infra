@@ -9,7 +9,7 @@ in {
     enable = lib.mkEnableOption "Acme defaults";
 
     email = lib.mkOption {
-      type = lib.types.string;
+      type = lib.types.str;
       default = "";
       description = "Email address to use for Let's Encrypt registration.";
     };

@@ -6,7 +6,7 @@
   inputs,
   ...
 }: let
-  cfg = config.axolotl.nix;
+  cfg = config.auxolotl.nix;
 
   substituters-submodule = lib.types.submodule ({name, ...}: {
     options = {
@@ -18,12 +18,12 @@
     };
   });
 in {
-  options.axolotl.nix = {
+  options.auxolotl.nix = {
     enable = lib.mkEnableOption "Nix configuration";
     package = lib.mkOption {
       type = lib.types.package;
-      default = pkgs.nixUnstable;
-      defaultText = "pkgs.nixUnstable";
+      default = pkgs.nix;
+      defaultText = "pkgs.nix";
       description = "Which Nix package to use.";
     };
 
@@ -52,7 +52,7 @@ in {
       lib.mapAttrsToList
       (name: value: {
         assertion = value.key != null;
-        message = "axolotl.nix.extra-substituters.${name}.key must be set";
+        message = "auxolotl.nix.extra-substituters.${name}.key must be set";
       })
       cfg.extra-substituters;
 
