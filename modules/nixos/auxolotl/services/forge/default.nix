@@ -86,7 +86,9 @@ in {
           DEFAULT_MERGE_STYLE = "squash";
         };
         "repository.signing" = {
-          DEFAULT_TRUST_MODEL = "committer";
+          SIGNING_KEY = "B46E42EDB01B797029F3D98B1A875715D0C04185";
+          SIGNING_NAME = "Auxolotl Forge";
+          SIGNING_EMAIL = "git@${cfg.domain}";
         };
       };
     };
