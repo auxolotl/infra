@@ -16,6 +16,7 @@ the IP can be found in the following section's systems list.
 
 ## Systems
 
-| System                                          | Description                                                   | IP                |
-| ----------------------------------------------- | ------------------------------------------------------------- | ----------------- |
-| [axol](./systems/x86_64-linux/axol/default.nix) | Primary server hosting `auxolotl.org` and `chat.auxolotl.org` | `137.184.177.239` |
+| System                                              | Description                                                   | IP                |
+| --------------------------------------------------- | ------------------------------------------------------------- | ----------------- |
+| [axol](./systems/x86_64-linux/axol/default.nix)     | Primary server hosting `auxolotl.org` and `chat.auxolotl.org` | `137.184.177.239` |
+| [baxter](./systems/x86_64-linux/baxter/default.nix) | Hosts `git.auxolotl.org`                                      | `209.38.149.197`  |
