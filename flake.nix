@@ -39,6 +39,10 @@
 
       deploy = lib.mkDeploy {
         inherit (inputs) self;
+        overrides = {
+          axol.hostname = "137.184.177.239";
+          baxter.hostname = "209.38.149.197";
+        };
       };
 
       checks =
