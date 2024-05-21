@@ -52,7 +52,7 @@ in {
           ENABLED = true;
           FROM = "git@${cfg.domain}";
           PROTOCOL = "smtps";
-          SMTP_ADDR = "smtp.${cfg.domain}";
+          SMTP_ADDR = "smtp.mailgun.org";
           SMTP_PORT = 465;
           USER = "git@${cfg.domain}";
         };
@@ -62,10 +62,12 @@ in {
           REGISTER_EMAIL_CONFIRM = true;
           ENABLE_NOTIFY_MAIL = true;
           DISABLE_REGISTRATION = false;
+          DEFAULT_ALLOW_CREATE_ORGANIZATION = false;
         };
         server = {
           DOMAIN = "${cfg.subdomain}.${cfg.domain}";
           HTTP_PORT = cfg.port;
+          ROOT_URL = "https://${cfg.subdomain}.${cfg.domain}";
         };
         repository = {
           ENABLE_PUSH_CREATE_USER = true;
@@ -75,9 +77,7 @@ in {
           INSTALL_LOCK = true;
         };
         indexer = {
-          REPLO_INDEXER_ENABLED = true;
-          UPDATE_BUFFER_LEN = 20;
-          MAX_FILE_SIZE = 1048576;
+          REPO_INDEXER_ENABLED = true;
         };
         session = {
           PROVIDER = "db";
@@ -96,6 +96,9 @@ in {
 
       virtualHosts = {
         "${cfg.subdomain}.${cfg.domain}" = {
+          forceSSL = true;
+          enableACME = true;
+
           locations = {
             "/" = {
               proxyPass = "http://localhost:${builtins.toString cfg.port}";
