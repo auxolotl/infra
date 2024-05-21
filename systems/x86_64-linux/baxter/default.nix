@@ -1,5 +1,5 @@
-# axol
-# 137.184.177.239
+# baxter
+# 209.38.149.197
 {
   pkgs,
   modulesPath,
@@ -38,8 +38,7 @@
 
     services = {
       ssh.enable = true;
-      chat.enable = true;
-      website.enable = true;
+      forge.enable = true;
     };
   };
 
