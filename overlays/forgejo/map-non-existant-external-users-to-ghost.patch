@@ -1,0 +1,97 @@
+From acbd44a1861b494829206889552337bfa6dc0727 Mon Sep 17 00:00:00 2001
+From: Gergely Nagy <forgejo@gergo.csillger.hu>
+Date: Tue, 28 May 2024 12:40:11 +0200
+Subject: [PATCH] migrations: Map non-existant external users to Ghost
+
+When performing migrations, and need to remap external users to local
+ones, when no local mapping is possible, map the external user to Ghost,
+rather than the user who initiated the migration.
+
+Mapping the external user to the migration initiator has the potential
+of breaking assumptions elsewhere, like only having one review per pull
+request per user. Mapping these migrated, locally unavailable users to
+Ghost makes sure these - often hidden - assumptions do not break.
+
+Fixes #3860.
+
+Signed-off-by: Gergely Nagy <forgejo@gergo.csillger.hu>
+(cherry picked from commit ade7304eea8ffdf5440adb71dfb2dcb50159379a)
+---
+ release-notes/8.0.0/fix/3935.md            |  1 +
+ services/migrations/gitea_uploader.go      |  2 +-
+ services/migrations/gitea_uploader_test.go | 12 ++++++------
+ 3 files changed, 8 insertions(+), 7 deletions(-)
+ create mode 100644 release-notes/8.0.0/fix/3935.md
+
+diff --git a/release-notes/8.0.0/fix/3935.md b/release-notes/8.0.0/fix/3935.md
+new file mode 100644
+index 0000000000..73ba10a6dc
+--- /dev/null
++++ b/release-notes/8.0.0/fix/3935.md
+@@ -0,0 +1 @@
++- Fixed an issue where migrated activities (such as reviews) were mapped to the user who initiated the migration rather than the Ghost user, if the external user could not be mapped to a local one. This mapping mismatch led to internal server errors in some cases (forgejo/forgejo#3860).
+diff --git a/services/migrations/gitea_uploader.go b/services/migrations/gitea_uploader.go
+index 9baae6d31d..d4f3952890 100644
+--- a/services/migrations/gitea_uploader.go
++++ b/services/migrations/gitea_uploader.go
+@@ -997,7 +997,7 @@ func (g *GiteaLocalUploader) remapUser(source user_model.ExternalUserMigrated, t
+ 	if userid > 0 {
+ 		return target.RemapExternalUser("", 0, userid)
+ 	}
+-	return target.RemapExternalUser(source.GetExternalName(), source.GetExternalID(), g.doer.ID)
++	return target.RemapExternalUser(source.GetExternalName(), source.GetExternalID(), user_model.GhostUserID)
+ }
+ 
+ func (g *GiteaLocalUploader) remapLocalUser(source user_model.ExternalUserMigrated, target user_model.ExternalUserRemappable) (int64, error) {
+diff --git a/services/migrations/gitea_uploader_test.go b/services/migrations/gitea_uploader_test.go
+index e98582f31a..35da8290c8 100644
+--- a/services/migrations/gitea_uploader_test.go
++++ b/services/migrations/gitea_uploader_test.go
+@@ -145,24 +145,24 @@ func TestGiteaUploadRemapLocalUser(t *testing.T) {
+ 
+ 	//
+ 	// The externalID does not match any existing user, everything
+-	// belongs to the doer
++	// belongs to the Ghost user
+ 	//
+ 	target := repo_model.Release{}
+ 	uploader.userMap = make(map[int64]int64)
+ 	err := uploader.remapUser(&source, &target)
+ 	assert.NoError(t, err)
+-	assert.EqualValues(t, doer.ID, target.GetUserID())
++	assert.EqualValues(t, user_model.GhostUserID, target.GetUserID())
+ 
+ 	//
+ 	// The externalID matches a known user but the name does not match,
+-	// everything belongs to the doer
++	// everything belongs to the Ghost user
+ 	//
+ 	source.PublisherID = user.ID
+ 	target = repo_model.Release{}
+ 	uploader.userMap = make(map[int64]int64)
+ 	err = uploader.remapUser(&source, &target)
+ 	assert.NoError(t, err)
+-	assert.EqualValues(t, doer.ID, target.GetUserID())
++	assert.EqualValues(t, user_model.GhostUserID, target.GetUserID())
+ 
+ 	//
+ 	// The externalID and externalName match an existing user, everything
+@@ -195,13 +195,13 @@ func TestGiteaUploadRemapExternalUser(t *testing.T) {
+ 
+ 	//
+ 	// When there is no user linked to the external ID, the migrated data is authored
+-	// by the doer
++	// by the Ghost user
+ 	//
+ 	uploader.userMap = make(map[int64]int64)
+ 	target := repo_model.Release{}
+ 	err := uploader.remapUser(&source, &target)
+ 	assert.NoError(t, err)
+-	assert.EqualValues(t, doer.ID, target.GetUserID())
++	assert.EqualValues(t, user_model.GhostUserID, target.GetUserID())
+ 
+ 	//
+ 	// Link the external ID to an existing user
+-- 
+2.39.2
+
