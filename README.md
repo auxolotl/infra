@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2024 Auxolotl Infrastructure Contributors
+
+SPDX-License-Identifier: GPL-3.0-only
+-->
+
 # Auxolotl - Infrastructure
 
 <a href="https://forum.aux.computer/c/committees/infrastructure-committee/29"><img src="https://img.shields.io/static/v1?label=Maintained%20By&message=Infrastructure%20Committee&style=for-the-badge&labelColor=222222&color=794AFF" /></a>
